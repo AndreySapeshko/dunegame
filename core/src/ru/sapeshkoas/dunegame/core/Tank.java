@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
-public class Tank {
+public class Tank implements Shooting {
     private Vector2 position;
     private Vector2 tmp;
     private TextureRegion[] textures;
@@ -24,7 +24,7 @@ public class Tank {
         position = new Vector2(x, y);
         tmp = new Vector2(1.0f, 0.0f);
         textures = new TextureRegion(atlas.findRegion("tankanim")).split(64, 64)[0];
-
+        bullet = new Bullet(atlas, "bullet");
         speed = 150.0f;
         timePerFrame = 0.1f;
     }
@@ -58,10 +58,36 @@ public class Tank {
             }
         }
         checkBounds();
-
+        if (Gdx.input.isKeyJustPressed(Input.Keys.K)) {
+            if (!bullet.isActive()) {
+                shot(bullet);
+            }
+        }
+        if (bullet.isActive()) {
+            resultOfShot(bullet, dt);
+        }
     }
 
+    @Override
+    public void shot(Projectile projectile) {
+        projectile.setActive(true);
+        tmp.rotate(angel);
+        tmp.scl(30);
+        tmp.add(position);
+        projectile.setup(tmp, angel);
+        projectile.position.add(tmp);
+    }
 
+    @Override
+    public void resultOfShot(Projectile projectile, float dt) {
+        projectile.update(dt);
+        if (projectile.position.x > 1280 || projectile.position.x < 0 ||
+                projectile.position.y > 720 || projectile.position.y < 0) {
+            projectile.setActive(false);
+            projectile.position.set(1.0f, 0.0f);
+            tmp.set(1.0f, 0.0f);
+        }
+    }
 
     public void checkBounds() {
         if (position.x < 40) {
@@ -80,6 +106,8 @@ public class Tank {
 
     public void render(SpriteBatch batch) {
         batch.draw(textures[getCurrentFrameIndex()],position.x - 40, position.y - 40, 40, 40, 80, 80, 1, 1,angel);
-
+        if (bullet.isActive()) {
+            bullet.render(batch);
+        }
     }
 }
