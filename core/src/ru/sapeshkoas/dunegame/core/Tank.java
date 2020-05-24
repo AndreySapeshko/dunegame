@@ -13,9 +13,9 @@ public class Tank {
     private Vector2 position;
     private Vector2 tmp;
     private TextureRegion[] textures;
-    private float angel;
+    private float angle;
     private float speed;
-    private Projectile bullet;
+    private Projectile projectile;
 
     private float moveTimer;
     private float timePerFrame;
@@ -24,13 +24,13 @@ public class Tank {
         position = new Vector2(x, y);
         tmp = new Vector2(1.0f, 0.0f);
         textures = new TextureRegion(atlas.findRegion("tankanim")).split(64, 64)[0];
-
+        projectile = new Projectile(atlas);
         speed = 150.0f;
         timePerFrame = 0.1f;
     }
 
     public float getAngel() {
-        return angel;
+        return angle;
     }
 
     public Vector2 getPosition() {
@@ -43,13 +43,13 @@ public class Tank {
 
     public void update(float dt) {
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            angel += 180.f * dt;
+            angle += 180.f * dt;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            angel -= 180.f * dt;
+            angle -= 180.f * dt;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            position.add(speed * MathUtils.cosDeg(angel) * dt, speed * MathUtils.sinDeg(angel) * dt);
+            position.add(speed * MathUtils.cosDeg(angle) * dt, speed * MathUtils.sinDeg(angle) * dt);
 
             moveTimer += dt;
         } else {
@@ -58,10 +58,21 @@ public class Tank {
             }
         }
         checkBounds();
-
+        if (Gdx.input.isKeyJustPressed(Input.Keys.K)) {
+            if (!projectile.isActive()) {
+                shot(projectile);
+            }
+        }
+        if (projectile.isActive()) {
+            projectile.update(dt);
+        }
     }
 
-
+    public void shot(Projectile projectile) {
+        tmp.set(position);
+        tmp.add(30 * MathUtils.cosDeg(angle), 30 * MathUtils.sinDeg(angle));
+        projectile.setup(tmp, angle);
+    }
 
     public void checkBounds() {
         if (position.x < 40) {
@@ -79,7 +90,7 @@ public class Tank {
     }
 
     public void render(SpriteBatch batch) {
-        batch.draw(textures[getCurrentFrameIndex()],position.x - 40, position.y - 40, 40, 40, 80, 80, 1, 1,angel);
-
+        batch.draw(textures[getCurrentFrameIndex()],position.x - 40, position.y - 40, 40, 40, 80, 80, 1, 1,angle);
+        projectile.render(batch);
     }
 }
