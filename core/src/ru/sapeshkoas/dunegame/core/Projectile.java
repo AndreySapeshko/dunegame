@@ -6,22 +6,18 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
-public abstract class Projectile {
+public class Projectile {
     protected Vector2 position;
     protected Vector2 velocity;
     private boolean isActive;
     protected TextureRegion texture;
 
 
-    public Projectile(TextureAtlas atlas, String textureName) {
-        position = new Vector2(1.0f, 0.0f);
-        texture = atlas.findRegion(textureName);
+    public Projectile(TextureAtlas atlas) {
+        position = new Vector2(0.0f, 0.0f);
+        texture = atlas.findRegion("bullet");
         isActive = false;
         velocity = new Vector2(0, 0);
-    }
-
-    public TextureRegion getTexture() {
-        return texture;
     }
 
     public boolean isActive() {
@@ -32,11 +28,24 @@ public abstract class Projectile {
         isActive = active;
     }
 
-    public abstract void setup(Vector2 startPosition, float angel);
-
-    public void update(float dt) {
-        position.mulAdd(velocity, dt);
+    public void setup(Vector2 startPosition, float angle){
+        position.set(startPosition);
+        velocity.set(600.0f * MathUtils.cosDeg(angle), 600.0f * MathUtils.sinDeg(angle));
+        setActive(true);
     }
 
-    public abstract void render(SpriteBatch batch);
+    public void update(float dt) {
+        if (position.x < 0 || position.x > 1280 || position.y < 0 || position.y > 720) {
+            setActive(false);
+        } else {
+            position.mulAdd(velocity, dt);
+        }
+    }
+
+    public void render(SpriteBatch batch) {
+        if (isActive) {
+            batch.draw(texture, position.x - 8, position.y - 8);
+        }
+
+    }
 }

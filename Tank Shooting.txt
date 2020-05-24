@@ -1,0 +1,18 @@
+Tank
+from method update():
+
+
+
+
+Shooting
+
+
+
+from method render():
+
+
+
+from constructor:
+
+
+
