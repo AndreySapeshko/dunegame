@@ -6,6 +6,11 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 public class GameController {
     private BattleMap map;
     private Tank tank;
+    private ProjectileController projectileController;
+
+    public ProjectileController getProjectileController() {
+        return projectileController;
+    }
 
     public BattleMap getBattleMap() {
         return map;
@@ -16,12 +21,14 @@ public class GameController {
     }
 
     public GameController() {
-        TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("game.pack"));
-        this.map = new BattleMap(atlas);
-        this.tank = new Tank(200, 200, atlas);
+        Assets.getOurInstance().loadAssets();
+        this.map = new BattleMap();
+        this.tank = new Tank(200, 200, this);
+        this.projectileController = new ProjectileController();
     }
 
     public void update(float dt) {
         tank.update(dt);
+        projectileController.update(dt);
     }
 }

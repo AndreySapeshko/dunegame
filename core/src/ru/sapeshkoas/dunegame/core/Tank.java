@@ -9,24 +9,24 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
-public class Tank {
-    private Vector2 position;
-    private Vector2 tmp;
+public class Tank extends GameObject {
+    private Vector2 destination;
     private TextureRegion[] textures;
     private float angle;
     private float speed;
-    private Projectile projectile;
+    private float rotationSpeed;
 
     private float moveTimer;
     private float timePerFrame;
 
-    public Tank(float x, float y, TextureAtlas atlas) {
-        position = new Vector2(x, y);
-        tmp = new Vector2(1.0f, 0.0f);
-        textures = new TextureRegion(atlas.findRegion("tankanim")).split(64, 64)[0];
-        projectile = new Projectile(atlas);
+    public Tank(float x, float y, GameController gc) {
+        super(gc);
+        position.set(x, y);
+        destination = new Vector2(position);
+        textures = Assets.getOurInstance().getTextureAtlas().findRegion("tankanim").split(64, 64)[0];
         speed = 150.0f;
         timePerFrame = 0.1f;
+        rotationSpeed = 90.0f;
     }
 
     public float getAngel() {
@@ -42,36 +42,43 @@ public class Tank {
     }
 
     public void update(float dt) {
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            angle += 180.f * dt;
+        if (Gdx.input.justTouched()) {
+            destination.set(Gdx.input.getX(), 720 - Gdx.input.getY());
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            angle -= 180.f * dt;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            position.add(speed * MathUtils.cosDeg(angle) * dt, speed * MathUtils.sinDeg(angle) * dt);
-
+        if (position.dst(destination) > 3.0f) {
+            float angleTo = tmp.set(destination).sub(position).angle();
+            float k = (Math.abs(angleTo - angle) < 180) ? 1 : -1;
+            if (Math.abs(angleTo - angle) > 3.0f) {
+                if (angleTo - angle > 0) {
+                    angle += rotationSpeed * dt * k;
+                } else {
+                    angle -= rotationSpeed * dt * k;
+                }
+            }
+            if (angle < 0.0f) {
+                angle += 360.0f;
+            }
+            if (angle > 360.0f) {
+                angle -= 360.0f;
+            }
             moveTimer += dt;
-        } else {
-            if (getCurrentFrameIndex() != 0) {
-                moveTimer += dt;
+            tmp.set(speed, 0).rotate(angle);
+            if ((position.dst(destination) > 100 && Math.abs(angleTo - angle) < 40) || Math.abs(angleTo - angle) < 10 ||
+            position.dst(destination) > 200) {
+                position.mulAdd(tmp, dt);
             }
         }
         checkBounds();
         if (Gdx.input.isKeyJustPressed(Input.Keys.K)) {
-            if (!projectile.isActive()) {
-                shot(projectile);
-            }
+            shot(gc.getProjectileController());
         }
-        if (projectile.isActive()) {
-            projectile.update(dt);
-        }
+
     }
 
-    public void shot(Projectile projectile) {
+    public void shot(ProjectileController projectileController) {
         tmp.set(position);
         tmp.add(30 * MathUtils.cosDeg(angle), 30 * MathUtils.sinDeg(angle));
-        projectile.setup(tmp, angle);
+        projectileController.setup(tmp, angle);
     }
 
     public void checkBounds() {
@@ -91,6 +98,5 @@ public class Tank {
 
     public void render(SpriteBatch batch) {
         batch.draw(textures[getCurrentFrameIndex()],position.x - 40, position.y - 40, 40, 40, 80, 80, 1, 1,angle);
-        projectile.render(batch);
     }
 }

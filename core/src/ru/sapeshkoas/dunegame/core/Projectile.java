@@ -6,18 +6,19 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
-public class Projectile {
-    protected Vector2 position;
-    protected Vector2 velocity;
+public class Projectile extends GameObject implements Poolable {
+    private Vector2 velocity;
     private boolean isActive;
-    protected TextureRegion texture;
+    private TextureRegion texture;
+    private float angle;
+    private float speed;
 
 
-    public Projectile(TextureAtlas atlas) {
-        position = new Vector2(0.0f, 0.0f);
-        texture = atlas.findRegion("bullet");
+    public Projectile(GameController gc) {
+        super(gc);
         isActive = false;
         velocity = new Vector2(0, 0);
+        speed = 350.0f;
     }
 
     public boolean isActive() {
@@ -28,17 +29,21 @@ public class Projectile {
         isActive = active;
     }
 
-    public void setup(Vector2 startPosition, float angle){
+    public void setup(Vector2 startPosition, float angle, TextureRegion texture){
+        this.texture = texture;
         position.set(startPosition);
-        velocity.set(600.0f * MathUtils.cosDeg(angle), 600.0f * MathUtils.sinDeg(angle));
+        this.angle = angle;
+        velocity.set(speed * MathUtils.cosDeg(angle), speed * MathUtils.sinDeg(angle));
         setActive(true);
     }
 
     public void update(float dt) {
-        if (position.x < 0 || position.x > 1280 || position.y < 0 || position.y > 720) {
-            setActive(false);
-        } else {
-            position.mulAdd(velocity, dt);
+        if (isActive) {
+            if (position.x < 0 || position.x > 1280 || position.y < 0 || position.y > 720) {
+                setActive(false);
+            } else {
+                position.mulAdd(velocity, dt);
+            }
         }
     }
 
