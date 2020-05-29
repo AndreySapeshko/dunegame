@@ -22,13 +22,14 @@ public class GameController {
 
     public GameController() {
         Assets.getOurInstance().loadAssets();
-        this.map = new BattleMap(this);
+        this.map = new BattleMap();
         this.tank = new Tank(200, 200, this);
         this.projectileController = new ProjectileController();
     }
 
     public void update(float dt) {
         tank.update(dt);
+        map.update(dt);
         projectileController.update(dt);
     }
 }
