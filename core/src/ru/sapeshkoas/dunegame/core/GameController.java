@@ -29,6 +29,7 @@ public class GameController {
 
     public void update(float dt) {
         tank.update(dt);
+        map.update(dt);
         projectileController.update(dt);
     }
 }
