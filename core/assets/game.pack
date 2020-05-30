@@ -45,3 +45,10 @@ bullet
   orig: 16, 16
   offset: 0, 0
   index: -1
+progressbar
+  rotate: false
+  xy: 20, 84
+  size: 60, 8
+  orig: 60, 8
+  offset: 0, 0
+  index: -1

@@ -74,6 +74,22 @@ public class BattleMap {
         }
     }
 
+    public int getResourceCount(Tank harvester) {
+        return cells[harvester.getCellX()][harvester.getCellY()].resource;
+    }
+
+    public int harvesterResource(Tank harvester, int power) {
+        int value = 0;
+        if (cells[harvester.getCellX()][harvester.getCellY()].resource >= power) {
+            value = power;
+            cells[harvester.getCellX()][harvester.getCellY()].resource -= power;
+        } else {
+            value = cells[harvester.getCellX()][harvester.getCellY()].resource;
+            cells[harvester.getCellX()][harvester.getCellY()].resource = 0;
+        }
+        return value;
+    }
+
     public void render(SpriteBatch batch) {
         for (int x = 0; x < 16; x++) {
             for (int y = 0; y < 9; y++) {

@@ -9,24 +9,41 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
-public class Tank extends GameObject {
+public class Tank extends GameObject implements Poolable {
+    public enum Owner {
+        PLAYER, AI
+    }
+
+    private Owner owner;
     private Vector2 destination;
     private TextureRegion[] textures;
+    private TextureRegion progressbarTexture;
     private float angle;
     private float speed;
     private float rotationSpeed;
+    private Weapon weapon;
+    private int container;
+    private int hp;
 
     private float moveTimer;
     private float timePerFrame;
 
-    public Tank(float x, float y, GameController gc) {
+    public Tank(GameController gc) {
         super(gc);
+        timePerFrame = 0.1f;
+        rotationSpeed = 90.0f;
+        progressbarTexture = Assets.getOurInstance().getTextureAtlas().findRegion("progressbar");
+
+    }
+
+    public void setup(float x, float y, Owner owner) {
         position.set(x, y);
         destination = new Vector2(position);
         textures = Assets.getOurInstance().getTextureAtlas().findRegion("tankanim").split(64, 64)[0];
         speed = 150.0f;
-        timePerFrame = 0.1f;
-        rotationSpeed = 90.0f;
+        weapon = new Weapon(Weapon.Type.HARVEST, 3.0f, 1);
+        hp = 100;
+        this.owner = owner;
     }
 
     public float getAngel() {
@@ -69,10 +86,24 @@ public class Tank extends GameObject {
             }
         }
         checkBounds();
-        if (Gdx.input.isKeyJustPressed(Input.Keys.K)) {
-            shot(gc.getProjectileController());
-        }
+        updateWeapon(dt);
+//        if (Gdx.input.isKeyJustPressed(Input.Keys.K)) {
+//            shot(gc.getProjectileController());
+//        }
 
+    }
+
+    public void updateWeapon(float dt) {
+        if (weapon.getType() == Weapon.Type.HARVEST) {
+            if (gc.getBattleMap().getResourceCount(this) > 0) {
+                int result = weapon.use(dt);
+                if (result > - 1) {
+                    container += gc.getBattleMap().harvesterResource(this, result);
+                }
+            } else {
+                weapon.reset();
+            }
+        }
     }
 
     public void shot(ProjectileController projectileController) {
@@ -98,5 +129,17 @@ public class Tank extends GameObject {
 
     public void render(SpriteBatch batch) {
         batch.draw(textures[getCurrentFrameIndex()],position.x - 40, position.y - 40, 40, 40, 80, 80, 1, 1,angle);
+        if (weapon.getType() == Weapon.Type.HARVEST && weapon.getUsageTimePercentage() > 0) {
+            batch.setColor(0.2f, 0.2f, 0.0f, 1.0f);
+            batch.draw(progressbarTexture, position.x - 32, position.y + 30, 64, 12);
+            batch.setColor(1.0f, 1.0f, 0.0f, 1.0f);
+            batch.draw(progressbarTexture, position.x - 30, position.y + 32, 60 * weapon.getUsageTimePercentage(), 8);
+            batch.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+        }
+    }
+
+    @Override
+    public boolean isActive() {
+        return hp > 0;
     }
 }

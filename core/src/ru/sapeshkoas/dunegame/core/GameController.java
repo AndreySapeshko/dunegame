@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
 public class GameController {
     private BattleMap map;
-    private Tank tank;
+    private TanksController tanksController;
     private ProjectileController projectileController;
 
     public ProjectileController getProjectileController() {
@@ -16,19 +16,20 @@ public class GameController {
         return map;
     }
 
-    public Tank getTank() {
-        return tank;
+    public TanksController getTanksController() {
+        return tanksController;
     }
 
     public GameController() {
         Assets.getOurInstance().loadAssets();
         this.map = new BattleMap();
-        this.tank = new Tank(200, 200, this);
+        this.tanksController = new TanksController(this);
+        this.tanksController.setup(200, 200, Tank.Owner.PLAYER);
         this.projectileController = new ProjectileController();
     }
 
     public void update(float dt) {
-        tank.update(dt);
+        tanksController.update(dt);
         map.update(dt);
         projectileController.update(dt);
     }
