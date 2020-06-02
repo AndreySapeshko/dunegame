@@ -3,6 +3,7 @@ package ru.sapeshkoas.dunegame.core;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -24,6 +25,8 @@ public class Tank extends GameObject implements Poolable {
     private Weapon weapon;
     private int container;
     private int hp;
+    private boolean operates;
+    private BitmapFont font12;
 
     private float moveTimer;
     private float timePerFrame;
@@ -44,6 +47,8 @@ public class Tank extends GameObject implements Poolable {
         weapon = new Weapon(Weapon.Type.HARVEST, 3.0f, 1);
         hp = 100;
         this.owner = owner;
+        operates = false;
+        font12 = Assets.getOurInstance().getAssetManager().get("fonts/font12.ttf");
     }
 
     public float getAngel() {
@@ -59,8 +64,19 @@ public class Tank extends GameObject implements Poolable {
     }
 
     public void update(float dt) {
-        if (Gdx.input.justTouched()) {
-            destination.set(Gdx.input.getX(), 720 - Gdx.input.getY());
+        if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
+            tmp.set(Gdx.input.getX(), 720 - Gdx.input.getY());
+            if (position.dst(tmp) < 30) {
+                operates = true;
+            } else {
+                operates = false;
+            }
+        }
+
+        if (operates) {
+            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+                destination.set(Gdx.input.getX(), 720 - Gdx.input.getY());
+            }
         }
         if (position.dst(destination) > 3.0f) {
             float angleTo = tmp.set(destination).sub(position).angle();
@@ -81,7 +97,7 @@ public class Tank extends GameObject implements Poolable {
             moveTimer += dt;
             tmp.set(speed, 0).rotate(angle);
             if ((position.dst(destination) > 100 && Math.abs(angleTo - angle) < 40) || Math.abs(angleTo - angle) < 10 ||
-            position.dst(destination) > 200) {
+                    position.dst(destination) > 200) {
                 position.mulAdd(tmp, dt);
             }
         }
@@ -98,7 +114,9 @@ public class Tank extends GameObject implements Poolable {
             if (gc.getBattleMap().getResourceCount(this) > 0) {
                 int result = weapon.use(dt);
                 if (result > - 1) {
-                    container += gc.getBattleMap().harvesterResource(this, result);
+                    if (container < 50) {
+                        container += gc.getBattleMap().harvesterResource(this, result);
+                    }
                 }
             } else {
                 weapon.reset();
@@ -129,13 +147,15 @@ public class Tank extends GameObject implements Poolable {
 
     public void render(SpriteBatch batch) {
         batch.draw(textures[getCurrentFrameIndex()],position.x - 40, position.y - 40, 40, 40, 80, 80, 1, 1,angle);
-        if (weapon.getType() == Weapon.Type.HARVEST && weapon.getUsageTimePercentage() > 0) {
+        if (weapon.getType() == Weapon.Type.HARVEST && weapon.getUsageTimePercentage() > 0 && container < 50) {
             batch.setColor(0.2f, 0.2f, 0.0f, 1.0f);
-            batch.draw(progressbarTexture, position.x - 32, position.y + 30, 64, 12);
+            batch.draw(progressbarTexture, position.x - 32, position.y + 30, 54, 12);
             batch.setColor(1.0f, 1.0f, 0.0f, 1.0f);
-            batch.draw(progressbarTexture, position.x - 30, position.y + 32, 60 * weapon.getUsageTimePercentage(), 8);
+            batch.draw(progressbarTexture, position.x - 30, position.y + 32, 50 * weapon.getUsageTimePercentage(), 8);
             batch.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+
         }
+        font12.draw(batch, "" + container, position.x + 24, position.y + 42, 12, 1, false);
     }
 
     @Override

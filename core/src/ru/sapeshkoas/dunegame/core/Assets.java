@@ -34,6 +34,7 @@ public class Assets {
     public void loadAssets() {
         assetManager.load("game.pack", TextureAtlas.class);
         createStandardFont(32);
+        createStandardFont(12);
         assetManager.finishLoading();
         textureAtlas = assetManager.get("game.pack");
     }
