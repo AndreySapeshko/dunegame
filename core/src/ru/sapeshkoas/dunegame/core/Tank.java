@@ -18,6 +18,7 @@ public class Tank extends GameObject implements Poolable {
     private Owner owner;
     private Vector2 destination;
     private TextureRegion[] textures;
+    private TextureRegion[] weaponTextures;
     private TextureRegion progressbarTexture;
     private float angle;
     private float speed;
@@ -27,28 +28,50 @@ public class Tank extends GameObject implements Poolable {
     private int hp;
     private boolean operates;
     private BitmapFont font12;
+    private Tank target;
 
     private float moveTimer;
     private float timePerFrame;
+    private float lifeTime;
 
     public Tank(GameController gc) {
         super(gc);
         timePerFrame = 0.1f;
         rotationSpeed = 90.0f;
         progressbarTexture = Assets.getOurInstance().getTextureAtlas().findRegion("progressbar");
+        weaponTextures = new TextureRegion[] {
+                Assets.getOurInstance().getTextureAtlas().findRegion("turret"),
+                Assets.getOurInstance().getTextureAtlas().findRegion("harvester")
+        };
 
     }
 
     public void setup(float x, float y, Owner owner) {
         position.set(x, y);
         destination = new Vector2(position);
-        textures = Assets.getOurInstance().getTextureAtlas().findRegion("tankanim").split(64, 64)[0];
+        textures = Assets.getOurInstance().getTextureAtlas().findRegion("tankcore").split(64, 64)[0];
         speed = 150.0f;
-        weapon = new Weapon(Weapon.Type.HARVEST, 3.0f, 1);
+        if (MathUtils.random() < 0.5) {
+            weapon = new Weapon(Weapon.Type.HARVEST, 3.0f, 1);
+        } else {
+            weapon = new Weapon(Weapon.Type.GROUND, 1.0f, 1);
+        }
         hp = 100;
         this.owner = owner;
         operates = false;
         font12 = Assets.getOurInstance().getAssetManager().get("fonts/font12.ttf");
+    }
+
+    public void setTarget(Tank target) {
+        this.target = target;
+    }
+
+    public Weapon getWeapon() {
+        return weapon;
+    }
+
+    public Owner getOwner() {
+        return owner;
     }
 
     public float getAngel() {
@@ -63,37 +86,29 @@ public class Tank extends GameObject implements Poolable {
         return (int) (moveTimer / timePerFrame) % textures.length;
     }
 
-    public void update(float dt) {
-        if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
-            tmp.set(Gdx.input.getX(), 720 - Gdx.input.getY());
-            if (position.dst(tmp) < 30) {
-                operates = true;
-            } else {
-                operates = false;
-            }
+    @Override
+    public void moveBy(Vector2 toPoint) {
+        boolean stayStill = false;
+        if (position.dst(toPoint) < 3.0f) {
+            stayStill = true;
         }
+        position.add(toPoint);
+        if (stayStill) {
+            destination.set(position);
+        }
+    }
 
-        if (operates) {
-            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-                destination.set(Gdx.input.getX(), 720 - Gdx.input.getY());
+    public void update(float dt) {
+        lifeTime += dt;
+        if (target != null) {
+            destination.set(target.position);
+            if (destination.dst(position) < 240.0f) {
+                destination.set(position);
             }
         }
         if (position.dst(destination) > 3.0f) {
             float angleTo = tmp.set(destination).sub(position).angle();
-            float k = (Math.abs(angleTo - angle) < 180) ? 1 : -1;
-            if (Math.abs(angleTo - angle) > 3.0f) {
-                if (angleTo - angle > 0) {
-                    angle += rotationSpeed * dt * k;
-                } else {
-                    angle -= rotationSpeed * dt * k;
-                }
-            }
-            if (angle < 0.0f) {
-                angle += 360.0f;
-            }
-            if (angle > 360.0f) {
-                angle -= 360.0f;
-            }
+            angle = rotateTo(angle, angleTo, rotationSpeed, dt);
             moveTimer += dt;
             tmp.set(speed, 0).rotate(angle);
             if ((position.dst(destination) > 100 && Math.abs(angleTo - angle) < 40) || Math.abs(angleTo - angle) < 10 ||
@@ -109,7 +124,24 @@ public class Tank extends GameObject implements Poolable {
 
     }
 
+    public void commandMoveTo(Vector2 point) {
+        destination.set(point);
+    }
+
+    public void commandAttack(Tank target) {
+        this.target = target;
+    }
+
     public void updateWeapon(float dt) {
+        weapon.setWeaponAngle(angle);
+        if (weapon.getType() == Weapon.Type.GROUND && target != null) {
+            float angleTo = tmp.set(target.position).sub(position).angle();
+            weapon.setWeaponAngle(rotateTo(weapon.getWeaponAngle(), angleTo, 180.0f, dt));
+            int power = weapon.use(dt);
+            if (power > - 1) {
+                gc.getProjectileController().setup(position, weapon.getWeaponAngle());
+            }
+        }
         if (weapon.getType() == Weapon.Type.HARVEST) {
             if (gc.getBattleMap().getResourceCount(this) > 0) {
                 int result = weapon.use(dt);
@@ -146,7 +178,13 @@ public class Tank extends GameObject implements Poolable {
     }
 
     public void render(SpriteBatch batch) {
+        if (gc.isTankSelected(this)) {
+            float c = 0.7f + (float) Math.sin(lifeTime * 8.0f) * 0.3f;
+            batch.setColor(c, c, c, 1.0f);
+        }
         batch.draw(textures[getCurrentFrameIndex()],position.x - 40, position.y - 40, 40, 40, 80, 80, 1, 1,angle);
+        batch.draw(weaponTextures[getWeapon().getType().getImageIndex()], position.x - 40, position.y - 40, 40, 40, 80, 80, 1, 1, getWeapon().getWeaponAngle());
+        batch.setColor(1.0f, 1.0f, 1.0f, 1.0f);
         if (weapon.getType() == Weapon.Type.HARVEST && weapon.getUsageTimePercentage() > 0 && container < 50) {
             batch.setColor(0.2f, 0.2f, 0.0f, 1.0f);
             batch.draw(progressbarTexture, position.x - 32, position.y + 30, 54, 12);
@@ -156,6 +194,24 @@ public class Tank extends GameObject implements Poolable {
 
         }
         font12.draw(batch, "" + container, position.x + 24, position.y + 42, 12, 1, false);
+    }
+
+    public float rotateTo(float srcAngle, float angleTo, float rSpeed, float dt) {
+        float k = (Math.abs(angleTo - srcAngle) < 180) ? 1 : -1;
+        if (Math.abs(angleTo - srcAngle) > 3.0f) {
+            if (angleTo - srcAngle > 0) {
+                srcAngle += rSpeed * dt * k;
+            } else {
+                srcAngle -= rSpeed * dt * k;
+            }
+        }
+        if (srcAngle < 0.0f) {
+            srcAngle += 360.0f;
+        }
+        if (srcAngle > 360.0f) {
+            srcAngle -= 360.0f;
+        }
+        return srcAngle;
     }
 
     @Override

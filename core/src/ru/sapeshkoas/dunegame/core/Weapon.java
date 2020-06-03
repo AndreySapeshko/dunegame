@@ -2,12 +2,22 @@ package ru.sapeshkoas.dunegame.core;
 
 public class Weapon {
     public enum Type {
-        GROUND, AIR, HARVEST
+        GROUND(0), HARVEST(1), AIR(2);
+        int imageIndex;
+
+        Type(int imageIndex) {
+            this.imageIndex = imageIndex;
+        }
+
+        public int getImageIndex() {
+            return imageIndex;
+        }
     }
     private Type type;
     private float period;
     private float time;
     private int power;
+    private float weaponAngle;
 
     public Weapon(Type type, float period, int power) {
         this.type = type;
@@ -17,6 +27,14 @@ public class Weapon {
 
     public Type getType() {
         return type;
+    }
+
+    public float getWeaponAngle() {
+        return weaponAngle;
+    }
+
+    public void setWeaponAngle(float weaponAngle) {
+        this.weaponAngle = weaponAngle;
     }
 
     public float getUsageTimePercentage() {

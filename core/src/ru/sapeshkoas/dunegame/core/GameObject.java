@@ -13,6 +13,10 @@ public abstract class GameObject {
         tmp = new Vector2();
     }
 
+    public void moveBy(Vector2 toPoint) {
+        position.add(toPoint);
+    }
+
     public int getCellX() {
         return (int) (position.x / BattleMap.CELL_SIZE);
     }
