@@ -42,7 +42,11 @@ public class TanksController extends ObjectPool<Tank> {
 
     public void update(float dt) {
         for (int i = 0; i < activeList.size(); i++) {
-            activeList.get(i).update(dt);
+            if (activeList.get(i).getHp() <= 0) {
+                free(i);
+            } else {
+                activeList.get(i).update(dt);
+            }
         }
         playerUpdate(dt);
         aiUpdate(dt);

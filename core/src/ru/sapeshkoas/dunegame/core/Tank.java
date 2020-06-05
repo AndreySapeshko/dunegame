@@ -62,9 +62,7 @@ public class Tank extends GameObject implements Poolable {
         font12 = Assets.getOurInstance().getAssetManager().get("fonts/font12.ttf");
     }
 
-    public void setTarget(Tank target) {
-        this.target = target;
-    }
+
 
     public Weapon getWeapon() {
         return weapon;
@@ -80,6 +78,14 @@ public class Tank extends GameObject implements Poolable {
 
     public Vector2 getPosition() {
         return position;
+    }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
     }
 
     private int getCurrentFrameIndex() {
@@ -104,6 +110,9 @@ public class Tank extends GameObject implements Poolable {
             destination.set(target.position);
             if (destination.dst(position) < 240.0f) {
                 destination.set(position);
+            }
+            if (target.getHp() <= 0) {
+                target = null;
             }
         }
         if (position.dst(destination) > 3.0f) {
@@ -133,13 +142,15 @@ public class Tank extends GameObject implements Poolable {
     }
 
     public void updateWeapon(float dt) {
-        weapon.setWeaponAngle(angle);
+        if (target == null) {
+            weapon.setWeaponAngle(angle);
+        }
         if (weapon.getType() == Weapon.Type.GROUND && target != null) {
             float angleTo = tmp.set(target.position).sub(position).angle();
             weapon.setWeaponAngle(rotateTo(weapon.getWeaponAngle(), angleTo, 180.0f, dt));
             int power = weapon.use(dt);
             if (power > - 1) {
-                gc.getProjectileController().setup(position, weapon.getWeaponAngle());
+                gc.getProjectileController().setup(position, target, weapon.getWeaponAngle());
             }
         }
         if (weapon.getType() == Weapon.Type.HARVEST) {
@@ -157,9 +168,9 @@ public class Tank extends GameObject implements Poolable {
     }
 
     public void shot(ProjectileController projectileController) {
-        tmp.set(position);
-        tmp.add(30 * MathUtils.cosDeg(angle), 30 * MathUtils.sinDeg(angle));
-        projectileController.setup(tmp, angle);
+//        tmp.set(position);
+//        tmp.add(30 * MathUtils.cosDeg(angle), 30 * MathUtils.sinDeg(angle));
+//        projectileController.setup(tmp, angle);
     }
 
     public void checkBounds() {
