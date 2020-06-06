@@ -22,7 +22,7 @@ public class WorldRenderer {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         gc.getBattleMap().render(batch);
-        gc.getTanksController().render(batch);
+        gc.getUnitsController().render(batch);
         gc.getProjectileController().render(batch);
         font32.draw(batch, "Dune Game 2020", 0, 680, 1280, 1, false);
         batch.end();

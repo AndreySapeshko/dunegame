@@ -5,12 +5,11 @@ import ru.sapeshkoas.dunegame.core.GameController;
 import ru.sapeshkoas.dunegame.core.WorldRenderer;
 
 public class GameScreen extends AbstractScreen {
-    private SpriteBatch batch;
     private GameController gameController;
     private WorldRenderer worldRenderer;
 
     public GameScreen(SpriteBatch batch) {
-        this.batch = batch;
+        super(batch);
     }
 
     @Override

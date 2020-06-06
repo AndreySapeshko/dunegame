@@ -52,9 +52,16 @@ harvester
   orig: 64, 64
   offset: 0, 0
   index: -1
-bullet
+selector
   rotate: false
   xy: 2, 84
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+bullet
+  rotate: false
+  xy: 2, 102
   size: 16, 16
   orig: 16, 16
   offset: 0, 0

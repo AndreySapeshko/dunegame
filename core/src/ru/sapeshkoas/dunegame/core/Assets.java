@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
+import ru.sapeshkoas.dunegame.screens.ScreenManager;
 
 public class Assets {
     private static final Assets ourInstance = new Assets();
@@ -31,12 +32,19 @@ public class Assets {
         return ourInstance;
     }
 
-    public void loadAssets() {
-        assetManager.load("game.pack", TextureAtlas.class);
-        createStandardFont(32);
-        createStandardFont(12);
-        assetManager.finishLoading();
-        textureAtlas = assetManager.get("game.pack");
+    public void loadAssets(ScreenManager.ScreenType type) {
+        switch (type) {
+            case MENU:
+                assetManager.load("images/game.pack", TextureAtlas.class);
+                createStandardFont(14);
+                createStandardFont(24);
+                createStandardFont(72);
+                break;
+            case GAME:
+                assetManager.load("images/game.pack", TextureAtlas.class);
+                createStandardFont(32);
+                break;
+        }
     }
 
     public void createStandardFont(int size) {
@@ -53,6 +61,10 @@ public class Assets {
         fontParameter.fontParameters.shadowOffsetY = 1;
         fontParameter.fontParameters.shadowColor = Color.BLACK;
         assetManager.load("fonts/font" + size + ".ttf", BitmapFont.class, fontParameter);
+    }
+
+    public void makeLinks() {
+        textureAtlas = assetManager.get("images/game.pack", TextureAtlas.class);
     }
 
     public void clear() {

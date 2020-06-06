@@ -1,13 +1,11 @@
 package ru.sapeshkoas.dunegame.core;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-
-import java.util.ArrayList;
-import java.util.List;
+import ru.sapeshkoas.dunegame.core.units.BattleTank;
+import ru.sapeshkoas.dunegame.core.units.Harvester;
 
 public class BattleMap {
     private class Cell {
@@ -74,18 +72,22 @@ public class BattleMap {
         }
     }
 
-    public int getResourceCount(Tank harvester) {
-        return cells[harvester.getCellX()][harvester.getCellY()].resource;
+    public int getResourceCount(Vector2 point) {
+        int cx = (int) (point.x / CELL_SIZE);
+        int cy = (int) (point.y / CELL_SIZE);
+        return cells[cx][cy].resource;
     }
 
-    public int harvesterResource(Tank harvester, int power) {
+    public int harvesterResource(Vector2 point, int power) {
+        int cx = (int) (point.x / CELL_SIZE);
+        int cy = (int) (point.y / CELL_SIZE);
         int value = 0;
-        if (cells[harvester.getCellX()][harvester.getCellY()].resource >= power) {
+        if (cells[cx][cy].resource >= power) {
             value = power;
-            cells[harvester.getCellX()][harvester.getCellY()].resource -= power;
+            cells[cx][cy].resource -= power;
         } else {
-            value = cells[harvester.getCellX()][harvester.getCellY()].resource;
-            cells[harvester.getCellX()][harvester.getCellY()].resource = 0;
+            value = cells[cx][cy].resource;
+            cells[cx][cy].resource = 0;
         }
         return value;
     }

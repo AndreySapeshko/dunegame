@@ -1,9 +1,9 @@
 package ru.sapeshkoas.dunegame.core;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import ru.sapeshkoas.dunegame.core.units.AbstractUnit;
 
 public class ProjectileController extends ObjectPool<Projectile> {
     private GameController gc;
@@ -25,9 +25,9 @@ public class ProjectileController extends ObjectPool<Projectile> {
         }
     }
 
-    public void setup(Vector2 srcPosition, Tank target, float angle) {
+    public void setup(AbstractUnit owner, Vector2 srcPosition, float angle) {
         Projectile p = getActiveElement();
-        p.setup(srcPosition, target, angle, texture);
+        p.setup(owner, srcPosition, angle, texture);
     }
 
     public void update(float dt) {
