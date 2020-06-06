@@ -35,6 +35,10 @@ public abstract class AbstractUnit extends GameObject implements Poolable, Targe
         return TargetType.UNIT;
     }
 
+    public Targetable getTarget() {
+        return target;
+    }
+
     public boolean takeDamage(int damage) {
         if (!isActive()) {
             return false;
@@ -70,6 +74,10 @@ public abstract class AbstractUnit extends GameObject implements Poolable, Targe
 
     public Vector2 getPosition() {
         return position;
+    }
+
+    public Vector2 getDestination() {
+        return destination;
     }
 
     public int getHp() {
