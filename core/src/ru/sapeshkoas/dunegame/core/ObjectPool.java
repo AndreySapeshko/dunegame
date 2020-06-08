@@ -26,7 +26,7 @@ public abstract class ObjectPool <T extends Poolable> {
         freeList.add(activeList.remove(index));
     }
 
-    public T getActiveElement() {
+    public T activateObject() {
         if (freeList.size() == 0) {
             freeList.add(newObject());
         }

@@ -53,9 +53,11 @@ public class BattleMap {
             }
         }
     }
-    public static final int COLUMN_COUNT = 16;
-    public static final int ROWS_COUNT = 9;
+    public static final int COLUMN_COUNT = 20;
+    public static final int ROWS_COUNT = 12;
     public static final int CELL_SIZE = 80;
+    public static final int MAP_WIDTH_PX = COLUMN_COUNT * CELL_SIZE;
+    public static final int MAP_HEIGHT_PX = ROWS_COUNT * CELL_SIZE;
 
     private Cell[][] cells;
     private TextureRegion grassTexture;
@@ -70,6 +72,18 @@ public class BattleMap {
                 cells[x][y] = new Cell(x, y);
             }
         }
+    }
+
+    public static int getColumnCount() {
+        return COLUMN_COUNT;
+    }
+
+    public static int getRowsCount() {
+        return ROWS_COUNT;
+    }
+
+    public static int getCellSize() {
+        return CELL_SIZE;
     }
 
     public int getResourceCount(Vector2 point) {
@@ -93,9 +107,9 @@ public class BattleMap {
     }
 
     public void render(SpriteBatch batch) {
-        for (int x = 0; x < 16; x++) {
-            for (int y = 0; y < 9; y++) {
-                batch.draw(grassTexture, x * 80, y * 80);
+        for (int x = 0; x < COLUMN_COUNT; x++) {
+            for (int y = 0; y < ROWS_COUNT; y++) {
+                batch.draw(grassTexture, x * CELL_SIZE, y * CELL_SIZE);
                 cells[x][y].render(batch);
             }
         }

@@ -12,7 +12,7 @@ public class HarvesterController extends ObjectPool<Harvester> {
     }
 
     public void setup(float x, float y, Owner owner) {
-        Harvester h = getActiveElement();
+        Harvester h = activateObject();
         h.setup(x, y, owner);
     }
 

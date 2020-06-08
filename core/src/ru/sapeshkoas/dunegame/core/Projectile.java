@@ -33,6 +33,10 @@ public class Projectile extends GameObject implements Poolable {
         return owner;
     }
 
+    public Vector2 getVelocity() {
+        return velocity;
+    }
+
     public void setup(AbstractUnit owner, Vector2 startPosition, float angle, TextureRegion texture){
         this.owner = owner;
         this.texture = texture;
@@ -44,7 +48,7 @@ public class Projectile extends GameObject implements Poolable {
 
     public void update(float dt) {
         position.mulAdd(velocity, dt);
-        if (position.x < 0 || position.x > 1280 || position.y < 0 || position.y > 720) {
+        if (position.x < 0 || position.x > BattleMap.MAP_WIDTH_PX || position.y < 0 || position.y > BattleMap.MAP_HEIGHT_PX) {
             setActive(false);
         }
     }

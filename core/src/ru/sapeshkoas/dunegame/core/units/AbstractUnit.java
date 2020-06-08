@@ -135,14 +135,14 @@ public abstract class AbstractUnit extends GameObject implements Poolable, Targe
         if (position.x < 32) {
             position.x = 32;
         }
-        if (position.x > 1248) {
-            position.x = 1248;
+        if (position.x > BattleMap.MAP_WIDTH_PX - 32) {
+            position.x = BattleMap.MAP_WIDTH_PX - 32;
         }
         if (position.y < 32) {
             position.y = 32;
         }
-        if (position.y > 688) {
-            position.y = 688;
+        if (position.y > BattleMap.MAP_HEIGHT_PX - 32) {
+            position.y = BattleMap.MAP_HEIGHT_PX - 32;
         }
     }
 

@@ -8,9 +8,27 @@ import ru.sapeshkoas.dunegame.core.units.UnitType;
 
 public class PlayerLogic {
     private GameController gc;
+    private int money;
+    private int unitsCount;
+    private int unitsMaxCount;
+
+    public int getMoney() {
+        return money;
+    }
+
+    public int getUnitsCount() {
+        return unitsCount;
+    }
+
+    public int getUnitsMaxCount() {
+        return unitsMaxCount;
+    }
 
     public PlayerLogic(GameController gc) {
         this.gc = gc;
+        this.money = 1000;
+        this.unitsCount = 10;
+        this.unitsMaxCount = 100;
     }
 
     public void update(float dt) {

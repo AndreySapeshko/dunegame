@@ -51,9 +51,9 @@ public class Harvester extends AbstractUnit implements Poolable, Targetable {
         super.renderGUI(batch);
         if (weapon.getUsageTimePercentage() > 0.0f) {
             batch.setColor(0.2f, 0.2f, 0.0f, 1.0f);
-            batch.draw(progressbarTexture, position.x - 32, position.y + 30, 64, 12);
+            batch.draw(progressbarTexture, position.x - 32, position.y + 22, 64, 8);
             batch.setColor(1.0f, 1.0f, 0.0f, 1.0f);
-            batch.draw(progressbarTexture, position.x - 30, position.y + 32, 60 * weapon.getUsageTimePercentage(), 8);
+            batch.draw(progressbarTexture, position.x - 30, position.y + 24, 60 * weapon.getUsageTimePercentage(), 4);
             batch.setColor(1.0f, 1.0f, 1.0f, 1.0f);
         }
     }

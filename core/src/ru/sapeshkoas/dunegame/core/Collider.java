@@ -1,5 +1,6 @@
 package ru.sapeshkoas.dunegame.core;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import ru.sapeshkoas.dunegame.core.units.AbstractUnit;
 import ru.sapeshkoas.dunegame.core.units.BattleTank;
@@ -37,6 +38,11 @@ public class Collider {
                 AbstractUnit unit = units.get(j);
                 if (p.getOwner() != unit && unit.getPosition().dst(p.getPosition()) < 30) {
                     p.setActive(false);
+                    for (int f = 0; f < 25; f++) {
+                        tmp.set(p.getVelocity()).nor().scl(120.0f).add(MathUtils.random(-40, 40), MathUtils.random(-40, 40));
+                        gc.getParticleController().setup(p.position.x, p.position.y, tmp.x, tmp.y, 0.5f, 1.0f, 0.4f,
+                                1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.5f);
+                    }
                     unit.takeDamage(10);
                 }
             }

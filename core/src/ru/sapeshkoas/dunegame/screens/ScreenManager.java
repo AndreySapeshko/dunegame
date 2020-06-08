@@ -44,6 +44,10 @@ public class ScreenManager {
         return viewport;
     }
 
+    public SpriteBatch getBatch() {
+        return batch;
+    }
+
     public Camera getCamera() {
         return camera;
     }

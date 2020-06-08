@@ -20,7 +20,7 @@ public class BattleTanksController extends ObjectPool<BattleTank> {
     }
 
     public void setup(float x, float y, Owner owner) {
-        BattleTank t = getActiveElement();
+        BattleTank t = activateObject();
         t.setup(x, y, owner);
     }
 

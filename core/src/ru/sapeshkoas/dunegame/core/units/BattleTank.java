@@ -1,6 +1,7 @@
 package ru.sapeshkoas.dunegame.core.units;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import ru.sapeshkoas.dunegame.core.*;
 
@@ -46,7 +47,16 @@ public class BattleTank extends AbstractUnit {
             weapon.setWeaponAngle(rotateTo(weapon.getWeaponAngle(), angleTo, 180.0f, dt));
             int power = weapon.use(dt);
             if (power > - 1) {
-                gc.getProjectileController().setup(this, position, angleTo);
+                tmp.nor().scl(30).add(position);
+                float particleX = tmp.x;
+                float particleY = tmp.y;
+                gc.getProjectileController().setup(this, tmp, angleTo);
+                for (int i = 0; i < 10; i++) {
+                    tmp.set(1.0f, 0.0f).rotate(angleTo).scl(550.0f - 20 * i);
+                    gc.getParticleController().setup(particleX + MathUtils.random(-1, 1), particleY + MathUtils.random(-1, 1),
+                            tmp.x, tmp.y, 0.4f, 1.0f, 0.3f,
+                            1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+                }
             }
         }
         if (target == null) {
