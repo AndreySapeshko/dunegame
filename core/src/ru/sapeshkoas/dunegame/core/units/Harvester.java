@@ -5,6 +5,8 @@ import com.badlogic.gdx.math.Vector2;
 import ru.sapeshkoas.dunegame.core.*;
 
 public class Harvester extends AbstractUnit implements Poolable, Targetable {
+
+
     public Harvester(GameController gc) {
         super(gc);
         this.unitType = UnitType.HARVESTER;
@@ -23,6 +25,14 @@ public class Harvester extends AbstractUnit implements Poolable, Targetable {
         this.owner = owner;
         this.hp = hpMax;
         this.destination = new Vector2(position);
+        if (owner == Owner.AI) {
+            warehouseX = BattleMap.AI_WAREHOUSE_X;
+            warehouseY = BattleMap.AI_WAREHOUSE_Y;
+        }
+        if (owner == Owner.PLAYER) {
+            warehouseX = BattleMap.PLAYER_WAREHOUSE_X;
+            warehouseY = BattleMap.PLAYER_WAREHOUSE_Y;
+        }
     }
 
     @Override
@@ -43,6 +53,23 @@ public class Harvester extends AbstractUnit implements Poolable, Targetable {
             }
         } else {
             weapon.reset();
+        }
+    }
+
+    @Override
+    public void unloadingAndRepair(float dt) {
+        int result = weapon.use(dt);
+        if (result > - 1) {
+            if (owner == Owner.AI) {
+                gc.getAiLogic().setMoney(container - hpMax + hp);
+                container = 0;
+
+            }
+            if (owner == Owner.PLAYER) {
+                gc.getPlayerLogic().setMoney(container - hpMax + hp);
+                container = 0;
+            }
+            hp = hpMax;
         }
     }
 

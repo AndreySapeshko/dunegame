@@ -25,6 +25,14 @@ public class BattleTank extends AbstractUnit {
         this.owner = owner;
         this.hp = hpMax;
         this.destination = new Vector2(position);
+        if (owner == Owner.AI) {
+            warehouseX = BattleMap.AI_WAREHOUSE_X;
+            warehouseY = BattleMap.AI_WAREHOUSE_Y;
+        }
+        if (owner == Owner.PLAYER) {
+            warehouseX = BattleMap.PLAYER_WAREHOUSE_X;
+            warehouseY = BattleMap.PLAYER_WAREHOUSE_Y;
+        }
     }
 
     @Override
@@ -61,6 +69,21 @@ public class BattleTank extends AbstractUnit {
         }
         if (target == null) {
             weapon.setWeaponAngle(rotateTo(weapon.getWeaponAngle(), angle, 180.0f, dt));
+        }
+    }
+
+    @Override
+    public void unloadingAndRepair(float dt) {
+        int result = weapon.use(dt);
+        if (result > - 1) {
+            if (owner == Owner.AI) {
+                gc.getAiLogic().setMoney(hp - hpMax);
+                hp = hpMax;
+            }
+            if (owner == Owner.PLAYER) {
+                gc.getPlayerLogic().setMoney(hp - hpMax);
+                hp = hpMax;
+            }
         }
     }
 

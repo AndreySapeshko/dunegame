@@ -68,6 +68,14 @@ public class GameController {
         return unitsController;
     }
 
+    public PlayerLogic getPlayerLogic() {
+        return playerLogic;
+    }
+
+    public AiLogic getAiLogic() {
+        return aiLogic;
+    }
+
     public List<AbstractUnit> getSelectedUnits() {
         return selectedUnits;
     }

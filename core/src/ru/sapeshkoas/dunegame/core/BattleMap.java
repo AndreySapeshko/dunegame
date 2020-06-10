@@ -58,14 +58,20 @@ public class BattleMap {
     public static final int CELL_SIZE = 80;
     public static final int MAP_WIDTH_PX = COLUMN_COUNT * CELL_SIZE;
     public static final int MAP_HEIGHT_PX = ROWS_COUNT * CELL_SIZE;
+    public static final int AI_WAREHOUSE_X = 40;
+    public static final int AI_WAREHOUSE_Y = MAP_HEIGHT_PX / 2;
+    public static final int PLAYER_WAREHOUSE_X = MAP_WIDTH_PX - 40;
+    public static final int PLAYER_WAREHOUSE_Y = MAP_HEIGHT_PX / 2;
 
     private Cell[][] cells;
     private TextureRegion grassTexture;
     private TextureRegion resourceTexture;
+    private TextureRegion warehouseTexture;
 
     public BattleMap() {
         grassTexture = Assets.getOurInstance().getTextureAtlas().findRegion("grass");
         resourceTexture = Assets.getOurInstance().getTextureAtlas().findRegion("trophy");
+        warehouseTexture = Assets.getOurInstance().getTextureAtlas().findRegion("shortButton");
         cells = new Cell[COLUMN_COUNT][ROWS_COUNT];
         for (int x = 0; x < COLUMN_COUNT; x++) {
             for (int y = 0; y < ROWS_COUNT; y++) {
@@ -113,6 +119,11 @@ public class BattleMap {
                 cells[x][y].render(batch);
             }
         }
+        batch.setColor(0.7f, 0.1f, 0.0f, 1.0f);
+        batch.draw(warehouseTexture,AI_WAREHOUSE_X - 40, AI_WAREHOUSE_Y - 40);
+        batch.setColor(0.1f, 0.7f, 0.0f, 1.0f);
+        batch.draw(warehouseTexture, PLAYER_WAREHOUSE_X - 40, PLAYER_WAREHOUSE_Y - 40);
+        batch.setColor(1.0f, 1.0f, 1.0f, 1.0f);
     }
 
     public void update(float dt) {

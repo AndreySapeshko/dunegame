@@ -25,6 +25,8 @@ public abstract class AbstractUnit extends GameObject implements Poolable, Targe
     protected int hpMax;
     protected Targetable target;
     protected float minDstToActiveTarget;
+    protected int warehouseX;
+    protected int warehouseY;
 
     protected float moveTimer;
     protected float timePerFrame;
@@ -118,7 +120,14 @@ public abstract class AbstractUnit extends GameObject implements Poolable, Targe
                 position.mulAdd(tmp, dt);
             }
         }
-        updateWeapon(dt);
+        tmp.set(warehouseX, warehouseY);
+        if (position.dst(tmp) < 3.0f && (container != 0 || hp < hpMax)) {
+            destination.set(position);
+            unloadingAndRepair(dt);
+        } else {
+            updateWeapon(dt);
+        }
+
         checkBounds();
     }
 
@@ -130,6 +139,8 @@ public abstract class AbstractUnit extends GameObject implements Poolable, Targe
     public abstract void commandAttack(Targetable target);
 
     public abstract void updateWeapon(float dt);
+
+    public abstract void unloadingAndRepair(float dt);
 
     public void checkBounds() {
         if (position.x < 32) {

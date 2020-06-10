@@ -9,9 +9,39 @@ import java.util.List;
 
 public class AiLogic {
     private GameController gc;
+    private int money;
+    private int unitsCount;
+    private int unitsMaxCount;
 
     public AiLogic(GameController gc) {
         this.gc = gc;
+        this.money = 1000;
+        this.unitsCount = 10;
+        this.unitsMaxCount = 100;
+    }
+
+    public void setMoney(int money) {
+        this.money += money;
+    }
+
+    public void setUnitsCount(int unitsCount) {
+        this.unitsCount = unitsCount;
+    }
+
+    public void setUnitsMaxCount(int unitsMaxCount) {
+        this.unitsMaxCount = unitsMaxCount;
+    }
+
+    public int getMoney() {
+        return money;
+    }
+
+    public int getUnitsCount() {
+        return unitsCount;
+    }
+
+    public int getUnitsMaxCount() {
+        return unitsMaxCount;
     }
 
     public void update(float dt) {
