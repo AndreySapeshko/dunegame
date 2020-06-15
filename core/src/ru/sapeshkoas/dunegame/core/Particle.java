@@ -1,6 +1,7 @@
 package ru.sapeshkoas.dunegame.core;
 
 import com.badlogic.gdx.math.Vector2;
+import ru.sapeshkoas.dunegame.core.interfaces.Poolable;
 
 public class Particle implements Poolable {
     private Vector2 position;

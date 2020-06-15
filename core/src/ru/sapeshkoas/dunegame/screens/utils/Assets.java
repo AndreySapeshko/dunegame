@@ -1,4 +1,4 @@
-package ru.sapeshkoas.dunegame.core;
+package ru.sapeshkoas.dunegame.screens.utils;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;

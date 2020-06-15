@@ -1,8 +1,11 @@
-package ru.sapeshkoas.dunegame.core;
+package ru.sapeshkoas.dunegame.core.controllers;
 
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import ru.sapeshkoas.dunegame.core.Particle;
+import ru.sapeshkoas.dunegame.core.utils.ObjectPool;
+import ru.sapeshkoas.dunegame.screens.utils.Assets;
 
 public class ParticleController extends ObjectPool<Particle> {
     private TextureRegion oneParticle;

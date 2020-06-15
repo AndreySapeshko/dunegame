@@ -1,15 +1,21 @@
 package ru.sapeshkoas.dunegame.core.units;
 
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import ru.sapeshkoas.dunegame.core.*;
+import ru.sapeshkoas.dunegame.core.interfaces.Poolable;
+import ru.sapeshkoas.dunegame.core.interfaces.Targetable;
+import ru.sapeshkoas.dunegame.core.units.types.Owner;
+import ru.sapeshkoas.dunegame.core.units.types.TargetType;
+import ru.sapeshkoas.dunegame.core.units.types.UnitType;
+import ru.sapeshkoas.dunegame.core.users_logic.BaseLogic;
+import ru.sapeshkoas.dunegame.screens.utils.Assets;
 
 public abstract class AbstractUnit extends GameObject implements Poolable, Targetable {
 
     protected UnitType unitType;
+    protected BaseLogic baseLogic;
     protected Owner owner;
     protected Weapon weapon;
     protected Vector2 destination;
@@ -33,6 +39,10 @@ public abstract class AbstractUnit extends GameObject implements Poolable, Targe
     @Override
     public TargetType getTargetType() {
         return TargetType.UNIT;
+    }
+
+    public BaseLogic getBaseLogic() {
+        return baseLogic;
     }
 
     public Targetable getTarget() {
@@ -62,13 +72,13 @@ public abstract class AbstractUnit extends GameObject implements Poolable, Targe
         progressbarTexture = Assets.getOurInstance().getTextureAtlas().findRegion("progressbar");
     }
 
-    public abstract void setup(float x, float y, Owner owner);
+    public abstract void setup(float x, float y, BaseLogic baseLogic);
 
     public Owner getOwner() {
         return owner;
     }
 
-    public float getAngel() {
+    public float getAngle() {
         return angle;
     }
 
@@ -79,6 +89,8 @@ public abstract class AbstractUnit extends GameObject implements Poolable, Targe
     public Vector2 getDestination() {
         return destination;
     }
+
+
 
     public int getHp() {
         return hp;
@@ -113,9 +125,9 @@ public abstract class AbstractUnit extends GameObject implements Poolable, Targe
             angle = rotateTo(angle, angleTo, rotationSpeed, dt);
             moveTimer += dt;
             tmp.set(speed, 0).rotate(angle);
-            if ((position.dst(destination) > 100 && Math.abs(angleTo - angle) < 40) || Math.abs(angleTo - angle) < 10 ||
-                    position.dst(destination) > 200) {
-                position.mulAdd(tmp, dt);
+            position.mulAdd(tmp, dt);
+            if ((position.dst(destination) < 120 && Math.abs(angleTo - angle) > 10) || !gc.getBattleMap().isCellGroundPassable(position)) {
+                position.mulAdd(tmp, -dt);
             }
         }
         updateWeapon(dt);

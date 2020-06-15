@@ -28,4 +28,8 @@ public abstract class GameObject {
     public Vector2 getPosition() {
         return position;
     }
+
+    public Vector2 getTmp() {
+        return tmp;
+    }
 }

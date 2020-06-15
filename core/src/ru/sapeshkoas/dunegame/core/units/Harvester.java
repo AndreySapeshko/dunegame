@@ -3,6 +3,11 @@ package ru.sapeshkoas.dunegame.core.units;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import ru.sapeshkoas.dunegame.core.*;
+import ru.sapeshkoas.dunegame.core.interfaces.Poolable;
+import ru.sapeshkoas.dunegame.core.interfaces.Targetable;
+import ru.sapeshkoas.dunegame.core.units.types.UnitType;
+import ru.sapeshkoas.dunegame.core.users_logic.BaseLogic;
+import ru.sapeshkoas.dunegame.screens.utils.Assets;
 
 public class Harvester extends AbstractUnit implements Poolable, Targetable {
     public Harvester(GameController gc) {
@@ -18,9 +23,10 @@ public class Harvester extends AbstractUnit implements Poolable, Targetable {
     }
 
     @Override
-    public void setup(float x, float y, Owner owner) {
+    public void setup(float x, float y, BaseLogic baseLogic) {
         this.position.set(x, y);
-        this.owner = owner;
+        this.baseLogic = baseLogic;
+        this.owner = this.baseLogic.getOwner();
         this.hp = hpMax;
         this.destination = new Vector2(position);
     }
@@ -43,6 +49,16 @@ public class Harvester extends AbstractUnit implements Poolable, Targetable {
             }
         } else {
             weapon.reset();
+        }
+    }
+
+    @Override
+    public void update(float dt) {
+        super.update(dt);
+        Building b = gc.getBattleMap().getBuildingEntrance(getCellX(), getCellY());
+        if (b != null && b.getType() == Building.Type.STOCK && b.getOwnerLogic() == baseLogic) {
+            baseLogic.addMoney(container * 100);
+            container = 0;
         }
     }
 

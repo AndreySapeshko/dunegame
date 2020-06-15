@@ -1,10 +1,12 @@
-package ru.sapeshkoas.dunegame.core;
+package ru.sapeshkoas.dunegame.core.controllers;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import ru.sapeshkoas.dunegame.core.GameController;
 import ru.sapeshkoas.dunegame.core.units.AbstractUnit;
-import ru.sapeshkoas.dunegame.core.units.Owner;
+import ru.sapeshkoas.dunegame.core.units.types.Owner;
+import ru.sapeshkoas.dunegame.core.units.types.UnitType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,16 +39,16 @@ public class UnitsController {
         playerUnits = new ArrayList<>();
         aiUnits = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
-            tanksController.setup(MathUtils.random(80, 1200), MathUtils.random(80, 640), Owner.PLAYER);
+            tanksController.setup(MathUtils.random(80, 1200), MathUtils.random(80, 640), gc.getPlayerLogic());
         }
         for (int i = 0; i < 2; i++) {
-            harvesterController.setup(MathUtils.random(80, 1200), MathUtils.random(80, 640), Owner.PLAYER);
+            harvesterController.setup(MathUtils.random(80, 1200), MathUtils.random(80, 640), gc.getPlayerLogic());
         }
         for (int i = 0; i < 2; i++) {
-            tanksController.setup(MathUtils.random(80, 1200), MathUtils.random(80, 640), Owner.AI);
+            tanksController.setup(MathUtils.random(80, 1200), MathUtils.random(80, 640), gc.getAiLogic());
         }
         for (int i = 0; i < 2; i++) {
-            harvesterController.setup(MathUtils.random(80, 1200), MathUtils.random(80, 640), Owner.AI);
+            harvesterController.setup(MathUtils.random(80, 1200), MathUtils.random(80, 640), gc.getAiLogic());
         }
     }
 
@@ -92,5 +94,15 @@ public class UnitsController {
             }
         }
         return null;
+    }
+
+    public <T> void collectTanks(List<T> outList, List<AbstractUnit> srcList, UnitType unitType) {
+        outList.clear();
+        for (int i = 0; i < srcList.size(); i++) {
+            AbstractUnit au = srcList.get(i);
+            if (au.getUnitType() == unitType) {
+                outList.add((T) au);
+            }
+        }
     }
 }

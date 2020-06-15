@@ -4,6 +4,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import ru.sapeshkoas.dunegame.core.*;
+import ru.sapeshkoas.dunegame.core.interfaces.Targetable;
+import ru.sapeshkoas.dunegame.core.units.types.TargetType;
+import ru.sapeshkoas.dunegame.core.units.types.UnitType;
+import ru.sapeshkoas.dunegame.core.users_logic.BaseLogic;
+import ru.sapeshkoas.dunegame.screens.utils.Assets;
 
 public class BattleTank extends AbstractUnit {
 
@@ -20,9 +25,10 @@ public class BattleTank extends AbstractUnit {
     }
 
     @Override
-    public void setup(float x, float y, Owner owner) {
+    public void setup(float x, float y, BaseLogic baseLogic) {
         this.position.set(x, y);
-        this.owner = owner;
+        this.baseLogic = baseLogic;
+        this.owner = this.baseLogic.getOwner();
         this.hp = hpMax;
         this.destination = new Vector2(position);
     }

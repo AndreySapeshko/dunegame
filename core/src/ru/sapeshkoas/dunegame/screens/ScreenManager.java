@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import ru.sapeshkoas.dunegame.DuneGame;
-import ru.sapeshkoas.dunegame.core.Assets;
+import ru.sapeshkoas.dunegame.screens.utils.Assets;
 
 public class ScreenManager {
     public enum ScreenType {

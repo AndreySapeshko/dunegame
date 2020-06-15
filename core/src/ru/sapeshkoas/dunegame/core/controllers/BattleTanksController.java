@@ -1,11 +1,10 @@
-package ru.sapeshkoas.dunegame.core;
+package ru.sapeshkoas.dunegame.core.controllers;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
+import ru.sapeshkoas.dunegame.core.GameController;
 import ru.sapeshkoas.dunegame.core.units.BattleTank;
-import ru.sapeshkoas.dunegame.core.units.Owner;
+import ru.sapeshkoas.dunegame.core.users_logic.BaseLogic;
+import ru.sapeshkoas.dunegame.core.utils.ObjectPool;
 
 public class BattleTanksController extends ObjectPool<BattleTank> {
     private GameController gc;
@@ -19,9 +18,9 @@ public class BattleTanksController extends ObjectPool<BattleTank> {
         this.gc = gc;
     }
 
-    public void setup(float x, float y, Owner owner) {
+    public void setup(float x, float y, BaseLogic baseLogic) {
         BattleTank t = activateObject();
-        t.setup(x, y, owner);
+        t.setup(x, y, baseLogic);
     }
 
     public void render(SpriteBatch batch) {

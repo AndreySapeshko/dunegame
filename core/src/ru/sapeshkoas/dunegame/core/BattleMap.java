@@ -4,15 +4,16 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import ru.sapeshkoas.dunegame.core.units.BattleTank;
-import ru.sapeshkoas.dunegame.core.units.Harvester;
+import ru.sapeshkoas.dunegame.screens.utils.Assets;
 
 public class BattleMap {
     private class Cell {
         private int cellX, cellY;
+        private Building buildingEntrance;
         private int resource;
         private float resourceRegenerationRate;
         private float resourceRegenerationTime;
+        private boolean groundPassable;
 
         public Cell(int x, int y) {
             this.cellX = x;
@@ -27,6 +28,7 @@ public class BattleMap {
             } else {
                 resourceRegenerationRate = 0.0f;
             }
+            groundPassable = true;
         }
 
         public void update(float dt) {
@@ -52,6 +54,16 @@ public class BattleMap {
                 }
             }
         }
+
+        public void blockGroundPass() {
+            groundPassable = false;
+            resource = 0;
+            resourceRegenerationRate = 0.0f;
+        }
+
+        public void unblockGroundPass() {
+            groundPassable = true;
+        }
     }
     public static final int COLUMN_COUNT = 20;
     public static final int ROWS_COUNT = 12;
@@ -59,6 +71,8 @@ public class BattleMap {
     public static final int MAP_WIDTH_PX = COLUMN_COUNT * CELL_SIZE;
     public static final int MAP_HEIGHT_PX = ROWS_COUNT * CELL_SIZE;
 
+    private float[][] plotProductivity;
+    private int cellsInPlot;
     private Cell[][] cells;
     private TextureRegion grassTexture;
     private TextureRegion resourceTexture;
@@ -72,6 +86,25 @@ public class BattleMap {
                 cells[x][y] = new Cell(x, y);
             }
         }
+        cellsInPlot = 4;
+        plotProductivity = new float[COLUMN_COUNT / cellsInPlot][ROWS_COUNT / cellsInPlot];
+    }
+
+    public boolean isCellGroundPassable(Vector2 position) {
+        int cellX = (int) (position.x / CELL_SIZE);
+        int cellY = (int) (position.y / CELL_SIZE);
+        if (cellX < 0 || cellY < 0 || cellX >= COLUMN_COUNT || cellY >= ROWS_COUNT){
+            return false;
+        }
+        return cells[cellX][cellY].groundPassable;
+    }
+
+    public float[][] getPlotProductivity() {
+        return plotProductivity;
+    }
+
+    public int getCellsInPlot() {
+        return cellsInPlot;
     }
 
     public static int getColumnCount() {
@@ -84,6 +117,22 @@ public class BattleMap {
 
     public static int getCellSize() {
         return CELL_SIZE;
+    }
+
+    public void setupBuildingEntrance(int cellX, int cellY, Building building) {
+        cells[cellX][cellY].buildingEntrance = building;
+    }
+
+    public Building getBuildingEntrance(int cellX, int cellY) {
+        return cells[cellX][cellY].buildingEntrance;
+    }
+
+    public void blockGroundCell(int cellX, int cellY) {
+        cells[cellX][cellY].blockGroundPass();
+    }
+
+    public void unblockGroundCell(int cellX, int cellY) {
+        cells[cellX][cellY].unblockGroundPass();
     }
 
     public int getResourceCount(Vector2 point) {
@@ -104,6 +153,21 @@ public class BattleMap {
             cells[cx][cy].resource = 0;
         }
         return value;
+    }
+
+    public float[][] getResourceMap() {
+        for (int i = 0; i < plotProductivity.length; i++) {
+            for (int j = 0; j < plotProductivity[i].length; j++) {
+                float value = 0.0f;
+                for (int x = i * cellsInPlot; x < (i + 1) * cellsInPlot; x++) {
+                    for (int y = j * cellsInPlot; y < (j + 1) * cellsInPlot; y++) {
+                        value += cells[x][y].resourceRegenerationRate;
+                    }
+                }
+                plotProductivity[i][j] = value;
+            }
+        }
+        return plotProductivity;
     }
 
     public void render(SpriteBatch batch) {

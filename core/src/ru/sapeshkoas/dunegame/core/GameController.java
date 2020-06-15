@@ -3,7 +3,6 @@ package ru.sapeshkoas.dunegame.core;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -12,11 +11,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import ru.sapeshkoas.dunegame.core.controllers.BuildingController;
+import ru.sapeshkoas.dunegame.core.controllers.ParticleController;
+import ru.sapeshkoas.dunegame.core.controllers.ProjectileController;
+import ru.sapeshkoas.dunegame.core.controllers.UnitsController;
 import ru.sapeshkoas.dunegame.core.gui.GuiPlayerInfo;
 import ru.sapeshkoas.dunegame.core.units.AbstractUnit;
-import ru.sapeshkoas.dunegame.core.units.BattleTank;
-import ru.sapeshkoas.dunegame.core.units.Owner;
+import ru.sapeshkoas.dunegame.core.users_logic.AiLogic;
+import ru.sapeshkoas.dunegame.core.users_logic.PlayerLogic;
+import ru.sapeshkoas.dunegame.core.utils.Collider;
 import ru.sapeshkoas.dunegame.screens.ScreenManager;
+import ru.sapeshkoas.dunegame.screens.utils.Assets;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +35,7 @@ public class GameController {
     private UnitsController unitsController;
     private ProjectileController projectileController;
     private ParticleController particleController;
+    private BuildingController buildingController;
     private Vector2 tmp;
     private Vector2 mouse;
     private Vector2 selectionStart;
@@ -39,6 +45,24 @@ public class GameController {
     private Stage stage;
     private GuiPlayerInfo guiPlayerInfo;
     private Vector2 pointOfView;
+    private float worldTimer;
+    private boolean paused;
+
+    public PlayerLogic getPlayerLogic() {
+        return playerLogic;
+    }
+
+    public float getWorldTimer() {
+        return worldTimer;
+    }
+
+    public boolean isPaused() {
+        return paused;
+    }
+
+    public AiLogic getAiLogic() {
+        return aiLogic;
+    }
 
     public Vector2 getSelectionStart() {
         return selectionStart;
@@ -54,6 +78,10 @@ public class GameController {
 
     public ParticleController getParticleController() {
         return particleController;
+    }
+
+    public BuildingController getBuildingController() {
+        return buildingController;
     }
 
     public Stage getStage() {
@@ -90,9 +118,12 @@ public class GameController {
         this.selectionStart = new Vector2();
         this.selectedUnits = new ArrayList<>();
         this.unitsController = new UnitsController(this);
+        this.buildingController = new BuildingController(this);
         this.projectileController = new ProjectileController();
         this.particleController = new ParticleController();
         this.pointOfView = new Vector2(ScreenManager.HALF_WORLD_WIDTH, ScreenManager.HALF_WORLD_HEIGHT);
+        buildingController.setup(3, 3, aiLogic);
+        buildingController.setup(14, 8, playerLogic);
         createGUIAndPrepareGameInput();
     }
 
@@ -101,20 +132,27 @@ public class GameController {
     }
 
     public void update(float dt) {
-        ScreenManager.getOurInstance().pointCameraTo(pointOfView);
-        mouse.set(Gdx.input.getX(), Gdx.input.getY());
-        ScreenManager.getOurInstance().getViewport().unproject(mouse);
-        unitsController.update(dt);
-        playerLogic.update(dt);
-        aiLogic.update(dt);
-        map.update(dt);
-        projectileController.update(dt);
-        particleController.update(dt);
-        collider.checkCollision(dt);
-        guiPlayerInfo.update(dt);
-        ScreenManager.getOurInstance().resetCamera();
-        stage.act(dt);
-        changePOV(dt);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+            paused = !paused;
+        }
+        if (!paused) {
+            worldTimer += dt;
+            ScreenManager.getOurInstance().pointCameraTo(pointOfView);
+            mouse.set(Gdx.input.getX(), Gdx.input.getY());
+            ScreenManager.getOurInstance().getViewport().unproject(mouse);
+            unitsController.update(dt);
+            buildingController.update(dt);
+            playerLogic.update(dt);
+            aiLogic.update(dt);
+            map.update(dt);
+            projectileController.update(dt);
+            particleController.update(dt);
+            collider.checkCollision(dt);
+            guiPlayerInfo.update(dt);
+            ScreenManager.getOurInstance().resetCamera();
+            stage.act(dt);
+            changePOV(dt);
+        }
     }
 
     public void changePOV(float dt) {

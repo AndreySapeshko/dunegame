@@ -1,9 +1,13 @@
-package ru.sapeshkoas.dunegame.core;
+package ru.sapeshkoas.dunegame.core.controllers;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import ru.sapeshkoas.dunegame.core.GameController;
+import ru.sapeshkoas.dunegame.core.Projectile;
 import ru.sapeshkoas.dunegame.core.units.AbstractUnit;
+import ru.sapeshkoas.dunegame.core.utils.ObjectPool;
+import ru.sapeshkoas.dunegame.screens.utils.Assets;
 
 public class ProjectileController extends ObjectPool<Projectile> {
     private GameController gc;
