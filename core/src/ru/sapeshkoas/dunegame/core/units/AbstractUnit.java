@@ -90,7 +90,13 @@ public abstract class AbstractUnit extends GameObject implements Poolable, Targe
         return destination;
     }
 
+    public int getContainer() {
+        return container;
+    }
 
+    public int getContainerCapacity() {
+        return containerCapacity;
+    }
 
     public int getHp() {
         return hp;

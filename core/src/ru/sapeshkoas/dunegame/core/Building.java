@@ -19,9 +19,14 @@ public class Building extends GameObject implements Poolable {
     private BaseLogic ownerLogic;
     private int hp;
     private int hpMax;
+    private Vector2 entrance;
 
     public Type getType() {
         return type;
+    }
+
+    public Vector2 getEntrance() {
+        return entrance;
     }
 
     public BaseLogic getOwnerLogic() {
@@ -49,6 +54,8 @@ public class Building extends GameObject implements Poolable {
 //            }
 //        }
         gc.getBattleMap().setupBuildingEntrance(cellX, cellY - 1, this);
+        this.entrance = new Vector2(cellX * BattleMap.CELL_SIZE + BattleMap.CELL_SIZE / 2,
+                (cellY - 1) * BattleMap.CELL_SIZE + BattleMap.CELL_SIZE / 2);
     }
 
     @Override
