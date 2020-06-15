@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import ru.sapeshkoas.dunegame.core.interfaces.Poolable;
 import ru.sapeshkoas.dunegame.core.units.AbstractUnit;
 
 public class Projectile extends GameObject implements Poolable {

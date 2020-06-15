@@ -1,4 +1,6 @@
-package ru.sapeshkoas.dunegame.core;
+package ru.sapeshkoas.dunegame.core.utils;
+
+import ru.sapeshkoas.dunegame.core.interfaces.Poolable;
 
 import java.util.ArrayList;
 import java.util.List;

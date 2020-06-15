@@ -1,7 +1,9 @@
-package ru.sapeshkoas.dunegame.core;
+package ru.sapeshkoas.dunegame.core.utils;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import ru.sapeshkoas.dunegame.core.GameController;
+import ru.sapeshkoas.dunegame.core.Projectile;
 import ru.sapeshkoas.dunegame.core.units.AbstractUnit;
 import ru.sapeshkoas.dunegame.core.units.BattleTank;
 
@@ -22,10 +24,10 @@ public class Collider {
             AbstractUnit unit1 = units.get(i);
             for (int j = i + 1; j < units.size(); j++) {
                 AbstractUnit unit2 = units.get(j);
-                float dst = unit1.position.dst(unit2.position);
+                float dst = unit1.getPosition().dst(unit2.getPosition());
                 if (dst < 60) {
                     float recoil = (60 - dst) / 2;
-                    tmp.set(unit2.position).sub(unit1.position).nor().scl(recoil);
+                    tmp.set(unit2.getPosition()).sub(unit1.getPosition()).nor().scl(recoil);
                     unit2.moveBy(tmp);
                     tmp.scl(-1);
                     unit1.moveBy(tmp);
@@ -36,11 +38,11 @@ public class Collider {
             Projectile p = gc.getProjectileController().getActiveList().get(i);
             for (int j = 0; j < units.size(); j++) {
                 AbstractUnit unit = units.get(j);
-                if (p.getOwner() != unit && unit.getPosition().dst(p.getPosition()) < 30) {
+                if (p.getOwner().getBaseLogic() != unit.getBaseLogic() && unit.getPosition().dst(p.getPosition()) < 30) {
                     p.setActive(false);
                     for (int f = 0; f < 25; f++) {
                         tmp.set(p.getVelocity()).nor().scl(120.0f).add(MathUtils.random(-40, 40), MathUtils.random(-40, 40));
-                        gc.getParticleController().setup(p.position.x, p.position.y, tmp.x, tmp.y, 0.5f, 1.0f, 0.4f,
+                        gc.getParticleController().setup(p.getPosition().x, p.getPosition().y, tmp.x, tmp.y, 0.5f, 1.0f, 0.4f,
                                 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.5f);
                     }
                     unit.takeDamage(10);

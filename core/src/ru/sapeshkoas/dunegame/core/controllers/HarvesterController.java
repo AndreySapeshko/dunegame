@@ -1,8 +1,10 @@
-package ru.sapeshkoas.dunegame.core;
+package ru.sapeshkoas.dunegame.core.controllers;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import ru.sapeshkoas.dunegame.core.GameController;
 import ru.sapeshkoas.dunegame.core.units.Harvester;
-import ru.sapeshkoas.dunegame.core.units.Owner;
+import ru.sapeshkoas.dunegame.core.users_logic.BaseLogic;
+import ru.sapeshkoas.dunegame.core.utils.ObjectPool;
 
 public class HarvesterController extends ObjectPool<Harvester> {
     private GameController gc;
@@ -11,9 +13,9 @@ public class HarvesterController extends ObjectPool<Harvester> {
         this.gc = gc;
     }
 
-    public void setup(float x, float y, Owner owner) {
+    public void setup(float x, float y, BaseLogic baseLogic) {
         Harvester h = activateObject();
-        h.setup(x, y, owner);
+        h.setup(x, y, baseLogic);
     }
 
     public void update(float dt) {

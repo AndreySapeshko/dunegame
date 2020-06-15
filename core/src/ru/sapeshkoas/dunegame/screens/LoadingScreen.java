@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import ru.sapeshkoas.dunegame.core.Assets;
+import ru.sapeshkoas.dunegame.screens.utils.Assets;
 
 public class LoadingScreen extends AbstractScreen {
     private Texture texture;
