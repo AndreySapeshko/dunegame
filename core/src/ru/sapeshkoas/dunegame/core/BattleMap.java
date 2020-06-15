@@ -31,6 +31,10 @@ public class BattleMap {
             groundPassable = true;
         }
 
+        public int getResource() {
+            return resource;
+        }
+
         public void update(float dt) {
             if (resourceRegenerationRate > 0.01f) {
                 resourceRegenerationTime += dt;
@@ -158,6 +162,7 @@ public class BattleMap {
     public float[][] getResourceMap() {
         for (int i = 0; i < plotProductivity.length; i++) {
             for (int j = 0; j < plotProductivity[i].length; j++) {
+                plotProductivity[i][j] = 0.0f;
                 float value = 0.0f;
                 for (int x = i * cellsInPlot; x < (i + 1) * cellsInPlot; x++) {
                     for (int y = j * cellsInPlot; y < (j + 1) * cellsInPlot; y++) {
